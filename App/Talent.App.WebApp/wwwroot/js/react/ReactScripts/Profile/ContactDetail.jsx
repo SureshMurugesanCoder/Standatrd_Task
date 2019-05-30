@@ -20,6 +20,10 @@ export class IndividualDetailSection extends Component {
             newContact: details
         }
 
+        console.log("Contact details");
+        console.log(this.state.newContact.firstName);
+        console.log(this.state.newContact.lastName);
+
         this.openEdit = this.openEdit.bind(this)
         this.closeEdit = this.closeEdit.bind(this)
         this.handleChange = this.handleChange.bind(this)
@@ -54,7 +58,7 @@ export class IndividualDetailSection extends Component {
         console.log(this.props.componentId)
         console.log(this.state.newContact)
         const data = Object.assign({}, this.state.newContact)
-        this.props.controlFunc(this.props.componentId, data)
+        this.props.controlFunc(this.props.componentId, data )
         this.closeEdit()
     }
 
@@ -120,7 +124,7 @@ export class IndividualDetailSection extends Component {
         let fullName = this.props.details ? `${this.props.details.firstName} ${this.props.details.lastName}` : ""
         let email = this.props.details ? this.props.details.email : ""
         let phone = this.props.details ? this.props.details.phone : ""
-
+        
         return (
             <div className='row'>
                 <div className="ui sixteen wide column">
@@ -153,6 +157,8 @@ export class CompanyDetailSection extends Component {
             showEditSection: false,
             newContact: details
         }
+
+        
 
         this.openEdit = this.openEdit.bind(this)
         this.closeEdit = this.closeEdit.bind(this)

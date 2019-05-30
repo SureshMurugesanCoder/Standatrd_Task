@@ -10,6 +10,7 @@ import AuthenticatingBanner from '../Layout/Banner/AuthenticatingBanner.jsx';
 import { LoggedInNavigation } from '../Layout/LoggedInNavigation.jsx';
 import { IndividualDetailSection, CompanyDetailSection } from './ContactDetail.jsx';
 import { BodyWrapper, loaderData } from '../Layout/BodyWrapper.jsx';
+import { AccountProfile } from './AccountProfile.jsx';
 
 export default class EmployeeProfile extends React.Component {
     constructor(props) {
@@ -217,7 +218,10 @@ export default class EmployeeProfile extends React.Component {
                                                 updateStateData={this.updateWithoutSave}
                                                 displayProfile={this.state.employerData.displayProfile}
                                             />
+                                           
                                         </FormItemWrapper>
+                                        
+                                       
                                         <div className="sixteen wide column">
                                             <div>
                                                 <input type="button" className="ui button right floated" onClick={() => window.history.go(-1)} value="Cancel"></input>

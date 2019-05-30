@@ -24,7 +24,14 @@ export default class AccountProfile extends React.Component {
 
         this.state = {
             profileData: {
-                address: {},
+                address: {
+                    number: '',
+                    street: '',
+                    suburb: '',
+                    postcode: '',
+                    country: '',
+                    city:''
+                },
                 nationality: '',
                 education: [],
                 languages: [],
@@ -34,6 +41,9 @@ export default class AccountProfile extends React.Component {
                 visaStatus: '',
                 visaExpiryDate: '',
                 profilePhoto: '',
+                profilePhotoUrl: '',
+                summary: '',
+                description: '',
                 linkedAccounts: {
                     linkedIn: "",
                     github: ""
@@ -76,25 +86,42 @@ export default class AccountProfile extends React.Component {
             },
             type: "GET",
             success: function (res) {
+                let profileData = null;
+                if (res.data) {
+                    profileData = res.data
+                    console.log("resData", profileData)
+                }
                 this.updateWithoutSave(res.data)
-            }.bind(this)
+            }.bind(this),
+            error: function (res) {
+                console.log(res.status)
+            }
         })
         this.init()
     }
     //updates component's state without saving data
     updateWithoutSave(newValues) {
+        console.log("updateWithoutSave");
+        console.log(newValues);
         let newProfile = Object.assign({}, this.state.profileData, newValues)
         this.setState({
             profileData: newProfile
         })
+        console.log("updateWithoutSave AFTER:");
+        console.log(this.state.profileData);
     }
 
     //updates component's state and saves data
     updateAndSaveData(newValues) {
+        
         let newProfile = Object.assign({}, this.state.profileData, newValues)
+        console.log("updateandSave Before:");
+        console.log(newProfile);
         this.setState({
             profileData: newProfile
         }, this.saveProfile)
+        console.log("updateandSave after:");
+        console.log(this.state.profileData);
     }
 
     updateForComponentId(componentId, newValues) {
@@ -102,6 +129,8 @@ export default class AccountProfile extends React.Component {
     }
 
     saveProfile() {
+        console.log("Save Profile");
+        console.log(JSON.stringify(this.state.profileData))
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
             url: 'http://localhost:60290/profile/profile/updateTalentProfile',
@@ -170,6 +199,8 @@ export default class AccountProfile extends React.Component {
                                                 addressData={this.state.profileData.address}
                                                 updateProfileData={this.updateWithoutSave}
                                                 saveProfileData={this.updateAndSaveData}
+                                                controlFunc={this.updateForComponentId}
+                                                componentId='addressDetails'
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
@@ -178,6 +209,28 @@ export default class AccountProfile extends React.Component {
                                         >
                                             <Nationality
                                                 nationalityData={this.state.profileData.nationality}
+                                                saveProfileData={this.updateAndSaveData}
+                                            />
+                                        </FormItemWrapper>
+                                        <FormItemWrapper
+                                            title='Description'
+                                        >
+                                            <SelfIntroduction
+                                                summary={this.state.profileData.summary}
+                                                description={this.state.profileData.description}
+                                                updateProfileData={this.updateAndSaveData}
+                                                updateWithoutSave={this.updateWithoutSave}
+                                            />
+                                        </FormItemWrapper>
+
+                                        <FormItemWrapper
+                                            title='Visa Status'
+                                            tooltip='What is your current Visa/Citizenship status?'
+                                        >
+                                            <VisaStatus
+                                                visaStatus={this.state.profileData.visaStatus}
+                                                visaExpiryDate={this.state.profileData.visaExpiryDate}
+                                                updateProfileData={this.updateWithoutSave}
                                                 saveProfileData={this.updateAndSaveData}
                                             />
                                         </FormItemWrapper>
@@ -209,35 +262,6 @@ export default class AccountProfile extends React.Component {
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
-                                            title='Education'
-                                            tooltip='Add your educational background'
-                                        >
-                                            <Education
-                                                educationData={this.state.profileData.education}
-                                                updateProfileData={this.updateAndSaveData}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Certification'
-                                            tooltip='List your certificates, honors and awards'
-                                        >
-                                            <Certificate
-                                                certificateData={this.state.profileData.certifications}
-                                                updateProfileData={this.updateAndSaveData}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Visa Status'
-                                            tooltip='What is your current Visa/Citizenship status?'
-                                        >
-                                            <VisaStatus
-                                                visaStatus={this.state.profileData.visaStatus}
-                                                visaExpiryDate={this.state.profileData.visaExpiryDate}
-                                                updateProfileData={this.updateWithoutSave}
-                                                saveProfileData={this.updateAndSaveData}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
                                             title='Status'
                                             tooltip='What is your current status in jobseeking?'
                                         >
@@ -250,43 +274,16 @@ export default class AccountProfile extends React.Component {
                                         <FormItemWrapper
                                             title='Profile Photo'
                                             tooltip='Please upload your profile photo'
-                                            hideSegment={true}
+                                            
                                         >
                                             <PhotoUpload
-                                                imageId={this.state.profileData.profilePhotoUrl}
+                                                profilePhotoUrl={this.state.profileData.profilePhotoUrl}
+                                                profilePhoto={this.state.profileData.profilePhoto}
                                                 updateProfileData={this.updateWithoutSave}
+                                                saveProfileData={this.updateAndSaveData}
                                                 savePhotoUrl='http://localhost:60290/profile/profile/updateProfilePhoto'
                                             />
                                         </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Profile Video'
-                                            tooltip='Upload a brief self-introduction video'
-                                            hideSegment={true}
-                                        >
-                                            <VideoUpload
-                                                videoName={this.state.profileData.videoName}
-                                                updateProfileData={this.updateWithoutSave}
-                                                saveVideoUrl={'http://localhost:60290/profile/profile/updateTalentVideo'}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='CV'
-                                            tooltip='Upload your CV. Accepted files are pdf, doc & docx)'
-                                            hideSegment={true}
-                                        >
-                                            <CVUpload
-                                                cvName={this.state.profileData.cvName}
-                                                cvUrl={this.state.profileData.cvUrl}
-                                                updateProfileData={this.updateWithoutSave}
-                                                saveCVUrl={'http://localhost:60290/profile/profile/updateTalentCV'}
-                                            />
-                                        </FormItemWrapper>
-                                        <SelfIntroduction
-                                            summary={this.state.profileData.summary}
-                                            description={this.state.profileData.description}
-                                            updateProfileData={this.updateAndSaveData}
-                                            updateWithoutSave={this.updateWithoutSave}
-                                        />
                                     </div>
                                 </form>
                             </div >
